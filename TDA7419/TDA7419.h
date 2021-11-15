@@ -1,5 +1,6 @@
-/*This program was written by zuhail pm/
-<november-8-2021>
+/*TDA7419 library code for Arduino,
+This program was written by zuhail pm.
+<updated on november-8-2021>
 <developer.zuhail@gmial.com>
 <github.com/zuhl-c*/
 
@@ -37,41 +38,43 @@
 #define Q_FACTOR    0x00 //q-factor
 #define DC_BASS     0x00 //bass dc mode
 #define SM_FILTER   0x00 //smoth filter
-#define MIX_L       0x00 //mixing right
-#define MIX_R       0x00 //mixing left
-#define EN_MIX      0x00 //enable mixing
-#define EN_SUB      0x00 //enable subwoofer
-#define MX_GAIN_EF  0x00 //gain effect hpf-22db
-#define SD_SRC      0x04 //second source select
-#define SD_GAIN     0x00 //second source gain
-#define SEL_SRC     0x00 //select main source
+#define TRIM_VOL    0xAE //trim volume
+#define MAIN_VOL    0x4F //minimum volume
 
 #include <Arduino.h>
 
 class TDA7419{
 public:
 	TDA7419();
-
+	//main source input(0,1,2,3) and gain (0..+15dB)
 	void input(int in, int gain);
+	//second source input(0,1,2,3), gain(0..+15dB),source slection
+	void sInput(int s_in,int s_gain,int sel_in);
+	//loud(0..15dB)center frequency(0,1,2,3/flat,400hz,800hz,2400hz)
 	void setLoud(int att_loud, int cf);
-	void softMute(int mute);
+	void softMute(int mute);//mute(0/1)
 
-	void setVol(int vol);
-	void setFl(int fl);
+	void setVol(int vol);//volume(0...-79dB)
+	void setFl(int fl);//fr,fl,sl,sr,sub,mix(0-15)
 	void setFr(int fl);
 	void setRl(int sl);
 	void setRr(int sr);
 	void setSub(int sub);
 	void setMix(int mix);
 
-	void sdInput(int src ,int sel);
+	//treble(-15dB..0...+15dB)center frequency(0,1,2,3/10khz,12.5kz,15khz,17.5khz)
 	void setTreble(int treble, int tr_cn);
-	void setMid(int mid);
-	void setBass(int bass);
+	void setMid(int mid);//mid(-15dB..0...+15dB)
+	void setBass(int bass);//bass(-15dB..0...+15dB)
+	//subwoofer cutoff frequency (0,1,2,3/flat,80hz,120hz,160hz)
+	//mid center frequency (0,1,2,3/500hz,1000hz,1500hz,2500hz)
+	//bass center frequency (0,1,2,3/60hz,80hz,100hz,200hz)
 	void setFreq(int sub_c, int mid_c, int bass_c);
-	void setMixGain(int ml,int mr,int en_mx,int en_sub,int gain_f);
-	void specAnalyse(int spc_filter,int rst_mode,int spc_src, int spc_run, int rst, int clk, int ac);
-
+	//mixing(0,1),subwoofer enable(0,1),HPF gain effect(0..10/0dB...22dB)
+	void mixFunc(int mx_l,int mx_r,int mx_en,int sub_en,int hpf);
+	//spectrum analyser- q_factor(0/1),reset mode(0/1),source(0/1),run(0/1),reset(0/1)
+	//clock source(0/1-internal/external),dc coupling mode(0..3)
+	void spectrum(int sq,int rst_md,int s_src,int s_run,int rst,int s_clk,int cp_md);
 private:
 void writeWire(char a,char b);
 };
